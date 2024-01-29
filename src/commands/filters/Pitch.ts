@@ -23,7 +23,7 @@ export default class Pitch extends Command {
             },
             permissions: {
                 dev: false,
-                client: ['SendMessages', 'ViewChannel', 'EmbedLinks'],
+                client: ['SendMessages', 'EmbedLinks'],
                 user: ['ManageGuild'],
             },
             slashCommand: true,

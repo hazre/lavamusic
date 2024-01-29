@@ -24,7 +24,7 @@ export default class Info extends Command {
             },
             permissions: {
                 dev: false,
-                client: ['SendMessages', 'ViewChannel', 'EmbedLinks'],
+                client: ['SendMessages', 'EmbedLinks'],
                 user: [],
             },
             slashCommand: true,

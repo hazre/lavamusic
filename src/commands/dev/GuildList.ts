@@ -21,7 +21,7 @@ export default class GuildList extends Command {
             },
             permissions: {
                 dev: true,
-                client: ['SendMessages', 'ViewChannel', 'EmbedLinks'],
+                client: ['SendMessages', 'EmbedLinks'],
                 user: [],
             },
             slashCommand: false,

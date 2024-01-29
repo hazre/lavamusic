@@ -21,7 +21,7 @@ export default class Leave extends Command {
             },
             permissions: {
                 dev: false,
-                client: ['SendMessages', 'ViewChannel', 'EmbedLinks'],
+                client: ['SendMessages', 'EmbedLinks'],
                 user: [],
             },
             slashCommand: true,

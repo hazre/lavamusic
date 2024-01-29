@@ -21,7 +21,7 @@ export default class Skipto extends Command {
             },
             permissions: {
                 dev: false,
-                client: ['SendMessages', 'ViewChannel', 'EmbedLinks'],
+                client: ['SendMessages', 'EmbedLinks'],
                 user: [],
             },
             slashCommand: true,

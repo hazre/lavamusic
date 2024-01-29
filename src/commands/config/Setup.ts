@@ -29,7 +29,7 @@ export default class Setup extends Command {
             },
             permissions: {
                 dev: false,
-                client: ['SendMessages', 'ViewChannel', 'EmbedLinks', 'ManageChannels'],
+                client: ['SendMessages', 'EmbedLinks', 'ManageChannels'],
                 user: ['ManageGuild'],
             },
             slashCommand: true,

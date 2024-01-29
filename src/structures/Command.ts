@@ -56,7 +56,7 @@ export default class Command {
             dev: options.permissions ? options.permissions.dev || false : false,
             client: options.permissions
                 ? options.permissions.client || []
-                : ['SendMessages', 'ViewChannel', 'EmbedLinks'],
+                : ['SendMessages', 'EmbedLinks'],
             user: options.permissions ? options.permissions.user || [] : [],
         };
         this.slashCommand = options.slashCommand || false;

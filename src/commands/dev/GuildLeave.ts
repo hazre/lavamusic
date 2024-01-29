@@ -21,7 +21,7 @@ export default class GuildLeave extends Command {
             },
             permissions: {
                 dev: true,
-                client: ['SendMessages', 'ViewChannel', 'EmbedLinks'],
+                client: ['SendMessages', 'EmbedLinks'],
                 user: [],
             },
             slashCommand: false,

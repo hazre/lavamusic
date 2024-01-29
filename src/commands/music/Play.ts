@@ -26,7 +26,7 @@ export default class Play extends Command {
             },
             permissions: {
                 dev: false,
-                client: ['SendMessages', 'ViewChannel', 'EmbedLinks', 'Connect', 'Speak'],
+                client: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
                 user: [],
             },
             slashCommand: true,
