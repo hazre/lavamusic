@@ -8,12 +8,13 @@
         "prisma:generate": "npx prisma generate",
         "start": "npm run build && node dist/index.js",
         "dev": "npm run build && nodemon --watch dist --exec node dist/index.js",
-        "build": "tsc --project tsconfig.json",
+        "build": "tsc --project tsconfig.json  && npm run copy:assets",
         "clean": "rm -rf dist",
         "lint": "eslint . --cache --ext .js,.jsx,.ts,.tsx",
         "lint:fix": "eslint . --fix --cache --ext .js,.jsx,.ts,.tsx",
         "format": "prettier --check .",
-        "format:fix": "prettier --write ."
+        "format:fix": "prettier --write .",
+        "copy:assets": "copyfiles -u 1 'src/assets/**' 'dist'"
     },
     "repository": {
         "type": "git",
@@ -46,14 +47,17 @@
         "eslint-plugin-unicorn": "^50.0.1",
         "prettier": "^3.2.4",
         "ts-node": "^10.9.2",
-        "typescript": "^5.3.3"
+        "typescript": "^5.3.3",
+        "tsx": "^4.7.0"
     },
     "dependencies": {
         "better-sqlite3": "^9.3.0",
+        "copyfiles": "^2.4.1",
         "discord.js": "^14.14.1",
         "dotenv": "^16.4.1",
         "shoukaku": "^4.0.1",
         "signale": "^1.4.0",
+        "songcard": "github:hazre/songcard",
         "tslib": "^2.6.2",
         "undici": "^6.5.0"
     },

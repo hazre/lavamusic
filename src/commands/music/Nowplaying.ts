@@ -1,3 +1,8 @@
+import { AttachmentBuilder } from 'discord.js';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import createCard from 'songcard';
+
 import { Command, Context, Lavamusic } from '../../structures/index.js';
 
 export default class Nowplaying extends Command {
@@ -30,26 +35,34 @@ export default class Nowplaying extends Command {
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {
         const player = client.queue.get(ctx.guild.id);
-
         const track = player.current;
-        const position = player.player.position;
-        const duration = track.info.length;
-        const bar = client.utils.progressBar(position, duration, 20);
+
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = dirname(__filename);
+        const noBgURL = path.join(__dirname, '..', '..', 'assets', 'no_bg.png');
+        const cardImage = await createCard(track.info.artworkUrl || noBgURL, track.info.title, track.info.isStream, player.player.position, track.info.length);
+        const attachment = new AttachmentBuilder(cardImage, { name: 'card.png' });
+
         const embed1 = this.client
             .embed()
+            .setAuthor({
+                name: 'Now Playing',
+                iconURL:
+                    this.client.config.icons[track.info.sourceName] ??
+                    this.client.user.displayAvatarURL({ extension: 'png' }),
+            })
             .setColor(this.client.color.main)
-            .setAuthor({ name: 'Now Playing', iconURL: ctx.guild.iconURL({}) })
-            .setThumbnail(track.info.artworkUrl)
-            .setDescription(
-                `[${track.info.title}](${track.info.uri}) - Request By: ${track.info.requester}\n\n\`${bar}\``
+            .setDescription(`**[${track.info.title}](${track.info.uri})**`)
+            .setFooter({
+                text: `Requested by ${track.info.requester.tag}`,
+                iconURL: track.info.requester.avatarURL({}),
+            })
+            .addFields(
+                { name: 'Author', value: track.info.author, inline: true }
             )
-            .addFields({
-                name: '\u200b',
-                value: `\`${client.utils.formatTime(position)} / ${client.utils.formatTime(
-                    duration
-                )}\``,
-            });
-        return await ctx.sendMessage({ embeds: [embed1] });
+            .setImage('attachment://card.png')
+            .setTimestamp();
+        return await ctx.sendMessage({ embeds: [embed1], files: [attachment] });
     }
 }
 
