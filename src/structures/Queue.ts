@@ -50,6 +50,15 @@ export class Queue extends Map {
 
             this.set(guild.id, dispatcher);
             this.client.shoukaku.emit('playerCreate', dispatcher.player);
+
+            // if guilds volume is set in database, set it as default.
+            try {
+                const volume = this.client.db.getVolume(guild.id);
+                dispatcher.player.setGlobalVolume(volume)
+            } catch (err) {
+                this.client.logger.error(err)
+            }
+
             return dispatcher;
         } else {
             return dispatcher;

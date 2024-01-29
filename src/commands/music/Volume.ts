@@ -14,9 +14,9 @@ export default class Volume extends Command {
             cooldown: 3,
             args: true,
             player: {
-                voice: true,
+                voice: false,
                 dj: true,
-                active: true,
+                active: false,
                 djPerm: null,
             },
             permissions: {
@@ -30,7 +30,7 @@ export default class Volume extends Command {
                     name: 'number',
                     description: 'The volume you want to set',
                     type: 4,
-                    required: true,
+                    required: false,
                 },
             ],
         });
@@ -38,6 +38,25 @@ export default class Volume extends Command {
     public async run(client: Lavamusic, ctx: Context, args: string[]): Promise<any> {
         const player = client.queue.get(ctx.guild.id);
         const embed = this.client.embed();
+
+        if (args.length === 0) {
+            let volume;
+            if (player) {
+                volume = player.player.volume;
+            } else if (client.db.getVolume(ctx.guild.id)) {
+                volume = client.db.getVolume(ctx.guild.id);
+            } else {
+                volume = 'not defined.';
+            }
+            return await ctx.sendMessage({
+                embeds: [
+                    embed
+                        .setColor(this.client.color.main)
+                        .setDescription(`Volume is ${volume}`),
+                ],
+            });
+        }
+
         const number = Number(args[0]);
         if (isNaN(number))
             return await ctx.sendMessage({
@@ -63,12 +82,13 @@ export default class Volume extends Command {
                         .setDescription('The volume can\'t be lower than 0.'),
                 ],
             });
-        player.player.setGlobalVolume(number);
+        if (player) player.player.setGlobalVolume(number);
+        client.db.setVolume(ctx.guild.id, number);
         return await ctx.sendMessage({
             embeds: [
                 embed
                     .setColor(this.client.color.main)
-                    .setDescription(`Set the volume to ${player.player.volume}`),
+                    .setDescription(`Set the volume to ${number}`),
             ],
         });
     }

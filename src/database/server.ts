@@ -22,6 +22,7 @@ export default class ServerData {
         db.prepare('CREATE TABLE IF NOT EXISTS botchannel (guildId TEXT PRIMARY KEY, textId TEXT)').run();
         db.prepare('CREATE TABLE IF NOT EXISTS setup (guildId TEXT PRIMARY KEY, textId TEXT, messageId TEXT)').run();
         db.prepare('CREATE TABLE IF NOT EXISTS premium (userId TEXT PRIMARY KEY, guildId TEXT)').run();
+        db.prepare('CREATE TABLE IF NOT EXISTS volume (guildId TEXT PRIMARY KEY, volumeNum INT)').run();
 
     }
     public get(guildId: string): any {
@@ -171,6 +172,26 @@ export default class ServerData {
             db.prepare('INSERT INTO setup (guildId, textId, messageId) VALUES (?, ?, ?)').run(guildId, textId, messageId);
         } else {
             db.prepare('UPDATE setup SET textId = ?, messageId = ? WHERE guildId = ?').run(textId, messageId, guildId);
+        }
+    }
+
+    public getVolume(guildId: string): any {
+        const data: any = db.prepare('SELECT * FROM volume WHERE guildId = ?').get(guildId);
+        if (!data) {
+            db.prepare('INSERT INTO volume (guildId) VALUES (?)').run(guildId);
+            return false;
+        } else {
+            if (!data.volumeNum) return false;
+            return data.volumeNum;
+        }
+    }
+
+    public setVolume(guildId: string, volumeNum: number): void {
+        let data = db.prepare('SELECT * FROM volume WHERE guildId = ?').get(guildId);
+        if (!data) {
+            db.prepare('INSERT INTO volume (guildId, volumeNum) VALUES (?, ?, ?)').run(guildId, volumeNum);
+        } else {
+            db.prepare('UPDATE volume SET volumeNum = ? WHERE guildId = ?').run(volumeNum, guildId);
         }
     }
 
