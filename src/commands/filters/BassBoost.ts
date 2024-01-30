@@ -25,6 +25,7 @@ export default class BassBoost extends Command {
                 user: ['ManageGuild'],
             },
             slashCommand: true,
+            disabled: true,
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {

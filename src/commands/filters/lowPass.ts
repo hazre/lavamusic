@@ -25,6 +25,7 @@ export default class lowPass extends Command {
                 user: ['ManageGuild'],
             },
             slashCommand: false,
+            disabled: true,
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {

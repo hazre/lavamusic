@@ -25,6 +25,7 @@ export default class Vibrato extends Command {
                 user: [],
             },
             slashCommand: true,
+            disabled: true,
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {

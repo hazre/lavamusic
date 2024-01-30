@@ -35,6 +35,7 @@ export default class Speed extends Command {
                     required: true,
                 },
             ],
+            disabled: true,
         });
     }
     public async run(client: Lavamusic, ctx: Context, args: string[]): Promise<any> {

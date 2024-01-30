@@ -26,6 +26,7 @@ export default class Reset extends Command {
             },
             slashCommand: true,
             options: [],
+            disabled: true,
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {

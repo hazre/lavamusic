@@ -26,6 +26,7 @@ export default class Karaoke extends Command {
             },
             slashCommand: true,
             options: [],
+            disabled: true,
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {
