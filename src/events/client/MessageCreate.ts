@@ -17,7 +17,7 @@ export default class MessageCreate extends Event {
             }
         }
         let prefix = this.client.db.getPrefix(message.guildId);
-        
+
         const mention = new RegExp(`^<@!?${this.client.user.id}>( |)$`);
         if (message.content.match(mention)) {
             await message.reply({
@@ -26,7 +26,9 @@ export default class MessageCreate extends Event {
             return;
         }
         const escapeRegex = (str: string): string => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const prefixRegex = new RegExp(`^(<@!?${this.client.user.id}>|${escapeRegex(prefix.prefix)})\\s*`);
+        const prefixRegex = new RegExp(
+            `^(<@!?${this.client.user.id}>|${escapeRegex(prefix.prefix)})\\s*`
+        );
         if (!prefixRegex.test(message.content)) return;
         const [matchedPrefix] = message.content.match(prefixRegex);
 
@@ -60,21 +62,21 @@ export default class MessageCreate extends Event {
 
         if (!message.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks))
             return await message.reply({
-                content: 'I don\'t have **`EmbedLinks`** permission.',
+                content: "I don't have **`EmbedLinks`** permission.",
             });
 
         if (command.permissions) {
             if (command.permissions.client) {
                 if (!message.guild.members.me.permissions.has(command.permissions.client))
                     return await message.reply({
-                        content: 'I don\'t have enough permissions to execute this command.',
+                        content: "I don't have enough permissions to execute this command.",
                     });
             }
 
             if (command.permissions.user) {
                 if (!message.member.permissions.has(command.permissions.user))
                     return await message.reply({
-                        content: 'You don\'t have enough permissions to use this command.',
+                        content: "You don't have enough permissions to use this command.",
                     });
             }
             if (command.permissions.dev) {
@@ -134,9 +136,10 @@ export default class MessageCreate extends Event {
                 const dj = this.client.db.getDj(message.guildId);
                 if (dj && dj.mode) {
                     const djRole = this.client.db.getRoles(message.guildId);
-                    if (!djRole) return await message.reply({
-                        content: 'DJ role is not set.',
-                    });
+                    if (!djRole)
+                        return await message.reply({
+                            content: 'DJ role is not set.',
+                        });
                     const findDJRole = message.member.roles.cache.find((x: any) =>
                         djRole.map((y: any) => y.roleId).includes(x.id)
                     );
@@ -197,7 +200,7 @@ export default class MessageCreate extends Event {
         }
         if (args.includes('@everyone') || args.includes('@here'))
             return await message.reply({
-                content: 'You can\'t use this command with everyone or here.',
+                content: "You can't use this command with everyone or here.",
             });
 
         try {

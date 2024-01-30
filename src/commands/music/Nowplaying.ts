@@ -40,7 +40,13 @@ export default class Nowplaying extends Command {
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = dirname(__filename);
         const noBgURL = path.join(__dirname, '..', '..', 'assets', 'no_bg.png');
-        const cardImage = await createCard(track.info.artworkUrl || noBgURL, track.info.title, track.info.isStream, player.player.position, track.info.length);
+        const cardImage = await createCard(
+            track.info.artworkUrl || noBgURL,
+            track.info.title,
+            track.info.isStream,
+            player.player.position,
+            track.info.length
+        );
         const attachment = new AttachmentBuilder(cardImage, { name: 'card.png' });
 
         const embed1 = this.client
@@ -57,9 +63,7 @@ export default class Nowplaying extends Command {
                 text: `Requested by ${track.info.requester.tag}`,
                 iconURL: track.info.requester.avatarURL({}),
             })
-            .addFields(
-                { name: 'Author', value: track.info.author, inline: true }
-            )
+            .addFields({ name: 'Author', value: track.info.author, inline: true })
             .setImage('attachment://card.png')
             .setTimestamp();
         return await ctx.sendMessage({ embeds: [embed1], files: [attachment] });

@@ -45,7 +45,7 @@ export default class Load extends Command {
             return await ctx.sendMessage({
                 embeds: [
                     {
-                        description: 'That playlist doesn\'t exist',
+                        description: "That playlist doesn't exist",
                         color: client.color.red,
                     },
                 ],

@@ -4,7 +4,7 @@ import config from '../config.js';
 
 const db = new Database('./database/lavamusic.db', {
     fileMustExist: false,
-    readonly: false
+    readonly: false,
 });
 db.pragma('journal_mode=WAL');
 
@@ -13,17 +13,32 @@ export default class ServerData {
         this.intialize();
     }
     public intialize(): void {
-        db.prepare('CREATE TABLE IF NOT EXISTS guild (guildId TEXT PRIMARY KEY, prefix TEXT)').run();
-        db.prepare('CREATE TABLE IF NOT EXISTS stay (guildId TEXT PRIMARY KEY, textId TEXT, voiceId TEXT)').run();
+        db.prepare(
+            'CREATE TABLE IF NOT EXISTS guild (guildId TEXT PRIMARY KEY, prefix TEXT)'
+        ).run();
+        db.prepare(
+            'CREATE TABLE IF NOT EXISTS stay (guildId TEXT PRIMARY KEY, textId TEXT, voiceId TEXT)'
+        ).run();
         db.prepare('CREATE TABLE IF NOT EXISTS dj (guildId TEXT PRIMARY KEY, mode BOOLEAN)').run();
         db.prepare('CREATE TABLE IF NOT EXISTS roles (guildId TEXT, roleId TEXT)').run();
-        db.prepare('CREATE TABLE IF NOT EXISTS user (userId TEXT PRIMARY KEY, accessToken TEXT, refreshToken TEXT, avatar TEXT, username TEXT, discriminator TEXT)').run();
-        db.prepare('CREATE TABLE IF NOT EXISTS playlist (userId TEXT, name TEXT, songs TEXT)').run();
-        db.prepare('CREATE TABLE IF NOT EXISTS botchannel (guildId TEXT PRIMARY KEY, textId TEXT)').run();
-        db.prepare('CREATE TABLE IF NOT EXISTS setup (guildId TEXT PRIMARY KEY, textId TEXT, messageId TEXT)').run();
-        db.prepare('CREATE TABLE IF NOT EXISTS premium (userId TEXT PRIMARY KEY, guildId TEXT)').run();
-        db.prepare('CREATE TABLE IF NOT EXISTS volume (guildId TEXT PRIMARY KEY, volumeNum INT)').run();
-
+        db.prepare(
+            'CREATE TABLE IF NOT EXISTS user (userId TEXT PRIMARY KEY, accessToken TEXT, refreshToken TEXT, avatar TEXT, username TEXT, discriminator TEXT)'
+        ).run();
+        db.prepare(
+            'CREATE TABLE IF NOT EXISTS playlist (userId TEXT, name TEXT, songs TEXT)'
+        ).run();
+        db.prepare(
+            'CREATE TABLE IF NOT EXISTS botchannel (guildId TEXT PRIMARY KEY, textId TEXT)'
+        ).run();
+        db.prepare(
+            'CREATE TABLE IF NOT EXISTS setup (guildId TEXT PRIMARY KEY, textId TEXT, messageId TEXT)'
+        ).run();
+        db.prepare(
+            'CREATE TABLE IF NOT EXISTS premium (userId TEXT PRIMARY KEY, guildId TEXT)'
+        ).run();
+        db.prepare(
+            'CREATE TABLE IF NOT EXISTS volume (guildId TEXT PRIMARY KEY, volumeNum INT)'
+        ).run();
     }
     public get(guildId: string): any {
         let data = db.prepare('SELECT * FROM guild WHERE guildId = ?').get(guildId);
@@ -46,9 +61,17 @@ export default class ServerData {
     public set_247(guildId: string, textId: string, voiceId: string): void {
         let data = db.prepare('SELECT * FROM stay WHERE guildId = ?').get(guildId);
         if (!data) {
-            db.prepare('INSERT INTO stay (guildId, textId, voiceId) VALUES (?, ?, ?)').run(guildId, textId, voiceId);
+            db.prepare('INSERT INTO stay (guildId, textId, voiceId) VALUES (?, ?, ?)').run(
+                guildId,
+                textId,
+                voiceId
+            );
         } else {
-            db.prepare('UPDATE stay SET textId = ?, voiceId = ? WHERE guildId = ?').run(textId, voiceId, guildId);
+            db.prepare('UPDATE stay SET textId = ?, voiceId = ? WHERE guildId = ?').run(
+                textId,
+                voiceId,
+                guildId
+            );
         }
     }
 
@@ -71,7 +94,10 @@ export default class ServerData {
     public getPrefix(guildId: string): any {
         const data: any = db.prepare('SELECT * FROM guild WHERE guildId = ?').get(guildId);
         if (!data) {
-            db.prepare('INSERT INTO guild (guildId, prefix) VALUES (?, ?)').run(guildId, config.prefix);
+            db.prepare('INSERT INTO guild (guildId, prefix) VALUES (?, ?)').run(
+                guildId,
+                config.prefix
+            );
             return {
                 prefix: config.prefix,
             };
@@ -119,14 +145,18 @@ export default class ServerData {
     }
 
     public addRole(guildId: string, roleId: string): void {
-        const data: any = db.prepare('SELECT * FROM roles WHERE guildId = ? AND roleId = ?').get(guildId, roleId);
+        const data: any = db
+            .prepare('SELECT * FROM roles WHERE guildId = ? AND roleId = ?')
+            .get(guildId, roleId);
         if (!data) {
             db.prepare('INSERT INTO roles (guildId, roleId) VALUES (?, ?)').run(guildId, roleId);
         }
     }
 
     public removeRole(guildId: string, roleId: string): void {
-        const data: any = db.prepare('SELECT * FROM roles WHERE guildId = ? AND roleId = ?').get(guildId, roleId);
+        const data: any = db
+            .prepare('SELECT * FROM roles WHERE guildId = ? AND roleId = ?')
+            .get(guildId, roleId);
         if (data) {
             db.prepare('DELETE FROM roles WHERE guildId = ? AND roleId = ?').run(guildId, roleId);
         }
@@ -150,7 +180,10 @@ export default class ServerData {
     public setBotChannel(guildId: string, textId: string): void {
         let data = db.prepare('SELECT * FROM botchannel WHERE guildId = ?').get(guildId);
         if (!data) {
-            db.prepare('INSERT INTO botchannel (guildId, textId) VALUES (?, ?)').run(guildId, textId);
+            db.prepare('INSERT INTO botchannel (guildId, textId) VALUES (?, ?)').run(
+                guildId,
+                textId
+            );
         } else {
             db.prepare('UPDATE botchannel SET textId = ? WHERE guildId = ?').run(textId, guildId);
         }
@@ -169,9 +202,17 @@ export default class ServerData {
     public setSetup(guildId: string, textId: string, messageId: string): void {
         let data = db.prepare('SELECT * FROM setup WHERE guildId = ?').get(guildId);
         if (!data) {
-            db.prepare('INSERT INTO setup (guildId, textId, messageId) VALUES (?, ?, ?)').run(guildId, textId, messageId);
+            db.prepare('INSERT INTO setup (guildId, textId, messageId) VALUES (?, ?, ?)').run(
+                guildId,
+                textId,
+                messageId
+            );
         } else {
-            db.prepare('UPDATE setup SET textId = ?, messageId = ? WHERE guildId = ?').run(textId, messageId, guildId);
+            db.prepare('UPDATE setup SET textId = ?, messageId = ? WHERE guildId = ?').run(
+                textId,
+                messageId,
+                guildId
+            );
         }
     }
 
@@ -189,7 +230,10 @@ export default class ServerData {
     public setVolume(guildId: string, volumeNum: number): void {
         let data = db.prepare('SELECT * FROM volume WHERE guildId = ?').get(guildId);
         if (!data) {
-            db.prepare('INSERT INTO volume (guildId, volumeNum) VALUES (?, ?, ?)').run(guildId, volumeNum);
+            db.prepare('INSERT INTO volume (guildId, volumeNum) VALUES (?, ?, ?)').run(
+                guildId,
+                volumeNum
+            );
         } else {
             db.prepare('UPDATE volume SET volumeNum = ? WHERE guildId = ?').run(volumeNum, guildId);
         }
@@ -211,7 +255,9 @@ export default class ServerData {
         }
     }
     public getPLaylist(userId: string, name: string): any {
-        const data: any = db.prepare('SELECT * FROM playlist WHERE userId = ? AND name = ?').get(userId, name);
+        const data: any = db
+            .prepare('SELECT * FROM playlist WHERE userId = ? AND name = ?')
+            .get(userId, name);
         if (!data) {
             return false;
         } else {
@@ -219,7 +265,9 @@ export default class ServerData {
         }
     }
     public createPlaylist(userId: string, name: string): void {
-        const data: any = db.prepare('SELECT * FROM playlist WHERE userId = ? AND name = ?').get(userId, name);
+        const data: any = db
+            .prepare('SELECT * FROM playlist WHERE userId = ? AND name = ?')
+            .get(userId, name);
         if (!data) {
             db.prepare('INSERT INTO playlist (userId, name) VALUES (?, ?)').run(userId, name);
         } else {
@@ -228,7 +276,9 @@ export default class ServerData {
     }
 
     public deletePlaylist(userId: string, name: string): void {
-        const data: any = db.prepare('SELECT * FROM playlist WHERE userId = ? AND name = ?').get(userId, name);
+        const data: any = db
+            .prepare('SELECT * FROM playlist WHERE userId = ? AND name = ?')
+            .get(userId, name);
         if (data) {
             db.prepare('DELETE FROM playlist WHERE userId = ? AND name = ?').run(userId, name);
         } else {
@@ -237,20 +287,32 @@ export default class ServerData {
     }
 
     public addSong(userId: string, name: string, song: string): void {
-        const data: any = db.prepare('SELECT * FROM playlist WHERE userId = ? AND name = ?').get(userId, name);
+        const data: any = db
+            .prepare('SELECT * FROM playlist WHERE userId = ? AND name = ?')
+            .get(userId, name);
         if (data) {
             const existingSongs = JSON.parse(data.songs || '[]');
             const updatedSongs = existingSongs.concat(song);
-            db.prepare('UPDATE playlist SET songs = ? WHERE userId = ? AND name = ?').run(JSON.stringify(updatedSongs), userId, name);
+            db.prepare('UPDATE playlist SET songs = ? WHERE userId = ? AND name = ?').run(
+                JSON.stringify(updatedSongs),
+                userId,
+                name
+            );
         } else {
             throw new Error('Playlist does not exist');
         }
     }
 
     public removeSong(userId: string, name: string, song: string): void {
-        const data: any = db.prepare('SELECT * FROM playlist WHERE userId = ? AND name = ?').get(userId, name);
+        const data: any = db
+            .prepare('SELECT * FROM playlist WHERE userId = ? AND name = ?')
+            .get(userId, name);
         if (data) {
-            db.prepare('UPDATE playlist SET songs = ? WHERE userId = ? AND name = ?').run(JSON.stringify(data.songs.filter((s: string) => s !== song)), userId, name);
+            db.prepare('UPDATE playlist SET songs = ? WHERE userId = ? AND name = ?').run(
+                JSON.stringify(data.songs.filter((s: string) => s !== song)),
+                userId,
+                name
+            );
         } else {
             throw new Error('Playlist does not exist');
         }

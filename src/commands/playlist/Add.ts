@@ -74,7 +74,7 @@ export default class Add extends Command {
             return await ctx.sendMessage({
                 embeds: [
                     {
-                        description: 'That playlist doesn\'t exist',
+                        description: "That playlist doesn't exist",
                         color: client.color.red,
                     },
                 ],
@@ -93,7 +93,7 @@ export default class Add extends Command {
         let trackStrings;
         let count;
         if (res.loadType === LoadType.PLAYLIST) {
-            trackStrings = res.data.tracks.map((track) => track);
+            trackStrings = res.data.tracks.map(track => track);
             count = res.data.tracks.length;
         } else {
             trackStrings = [res.data[0]];

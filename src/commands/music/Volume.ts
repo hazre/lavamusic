@@ -50,9 +50,7 @@ export default class Volume extends Command {
             }
             return await ctx.sendMessage({
                 embeds: [
-                    embed
-                        .setColor(this.client.color.main)
-                        .setDescription(`Volume is ${volume}`),
+                    embed.setColor(this.client.color.main).setDescription(`Volume is ${volume}`),
                 ],
             });
         }
@@ -71,7 +69,7 @@ export default class Volume extends Command {
                 embeds: [
                     embed
                         .setColor(this.client.color.red)
-                        .setDescription('The volume can\'t be higher than 200.'),
+                        .setDescription("The volume can't be higher than 200."),
                 ],
             });
         if (number < 0)
@@ -79,7 +77,7 @@ export default class Volume extends Command {
                 embeds: [
                     embed
                         .setColor(this.client.color.red)
-                        .setDescription('The volume can\'t be lower than 0.'),
+                        .setDescription("The volume can't be lower than 0."),
                 ],
             });
         if (player) player.player.setGlobalVolume(number);

@@ -45,14 +45,14 @@ export default class InteractionCreate extends Event {
 
             if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.EmbedLinks))
                 return await interaction.reply({
-                    content: 'I don\'t have **`EmbedLinks`** permission.',
+                    content: "I don't have **`EmbedLinks`** permission.",
                 });
 
             if (command.permissions) {
                 if (command.permissions.client) {
                     if (!interaction.guild.members.me.permissions.has(command.permissions.client))
                         return await interaction.reply({
-                            content: 'I don\'t have enough permissions to execute this command.',
+                            content: "I don't have enough permissions to execute this command.",
                         });
                 }
 
@@ -63,7 +63,7 @@ export default class InteractionCreate extends Event {
                         )
                     ) {
                         await interaction.reply({
-                            content: 'You don\'t have enough permissions to use this command.',
+                            content: "You don't have enough permissions to use this command.",
                             ephemeral: true,
                         });
                         return;
@@ -133,9 +133,10 @@ export default class InteractionCreate extends Event {
                     const dj = this.client.db.getDj(interaction.guildId);
                     if (dj && dj.mode) {
                         const djRole = this.client.db.getRoles(interaction.guildId);
-                        if (!djRole) return await interaction.reply({
-                            content: 'DJ role is not set.',
-                        });
+                        if (!djRole)
+                            return await interaction.reply({
+                                content: 'DJ role is not set.',
+                            });
                         const findDJRole = (interaction.member as GuildMember).roles.cache.find(
                             (x: any) => djRole.map((y: any) => y.roleId).includes(x.id)
                         );
@@ -178,13 +179,15 @@ export default class InteractionCreate extends Event {
                 setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
             }
             if (
-                interaction.options.data.some(option =>
-                    option.value && option.value.toString().includes('@everyone')
+                interaction.options.data.some(
+                    option => option.value && option.value.toString().includes('@everyone')
                 ) ||
-                interaction.options.data.some(option => option.value && option.value.toString().includes('@here'))
+                interaction.options.data.some(
+                    option => option.value && option.value.toString().includes('@here')
+                )
             )
                 return await interaction.reply({
-                    content: 'You can\'t mention everyone or here.',
+                    content: "You can't mention everyone or here.",
                     ephemeral: true,
                 });
             try {
@@ -211,7 +214,7 @@ export default class InteractionCreate extends Event {
                     default:
                         break;
                 }
-                
+
                 return await interaction.respond(songs).catch(() => {});
             }
         }

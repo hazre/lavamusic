@@ -13,7 +13,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
     },
-    "exclude": ["dist", "node_modules", "tests", "dashboard"]
+    "exclude": ["dist", "node_modules", "tests", "dashboard"],
 }

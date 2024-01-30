@@ -63,7 +63,7 @@ export default class Setup extends Command {
         switch (subCommand) {
             case 'create': {
                 const data = client.db.getSetup(ctx.guild.id);
-                
+
                 if (data && data.textId && data.msgId)
                     return await ctx.sendMessage({
                         embeds: [
@@ -131,7 +131,7 @@ export default class Setup extends Command {
                     return await ctx.sendMessage({
                         embeds: [
                             {
-                                description: 'The song request channel doesn\'t exist',
+                                description: "The song request channel doesn't exist",
                                 color: client.color.red,
                             },
                         ],
@@ -140,7 +140,9 @@ export default class Setup extends Command {
                 await ctx.guild.channels.cache
                     .get(data2.textId)
                     .delete()
-                    .catch(() => {null});
+                    .catch(() => {
+                        null;
+                    });
                 await ctx.sendMessage({
                     embeds: [
                         {
@@ -158,7 +160,7 @@ export default class Setup extends Command {
                     return await ctx.sendMessage({
                         embeds: [
                             {
-                                description: 'The song request channel doesn\'t exist',
+                                description: "The song request channel doesn't exist",
                                 color: client.color.red,
                             },
                         ],

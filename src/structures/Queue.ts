@@ -32,7 +32,8 @@ export class Queue extends Map {
         if (!channel) throw new Error('No text channel was provided');
         if (!guild) throw new Error('No guild was provided');
         if (!dispatcher) {
-            const node = givenNode || this.client.shoukaku.options.nodeResolver(this.client.shoukaku.nodes);
+            const node =
+                givenNode || this.client.shoukaku.options.nodeResolver(this.client.shoukaku.nodes);
             const player = await this.client.shoukaku.joinVoiceChannel({
                 guildId: guild.id,
                 channelId: voice.id,
@@ -54,9 +55,9 @@ export class Queue extends Map {
             // if guilds volume is set in database, set it as default.
             try {
                 const volume = this.client.db.getVolume(guild.id);
-                dispatcher.player.setGlobalVolume(volume)
+                dispatcher.player.setGlobalVolume(volume);
             } catch (err) {
-                this.client.logger.error(err)
+                this.client.logger.error(err);
             }
 
             return dispatcher;
