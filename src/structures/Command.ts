@@ -29,6 +29,7 @@ export default class Command {
     public slashCommand: boolean;
     public options: ApplicationCommandOption[];
     public category: string | null;
+    public disabled: boolean | null;
     constructor(client: Lavamusic, options: CommandOptions) {
         this.client = client;
         this.name = options.name;
@@ -62,6 +63,7 @@ export default class Command {
         this.slashCommand = options.slashCommand || false;
         this.options = options.options || [];
         this.category = options.category || 'general';
+        this.disabled = options.disabled || false;
     }
     public async run(_client: Lavamusic, _message: any, _args: string[]): Promise<any> {
         return await Promise.resolve();
@@ -94,6 +96,7 @@ interface CommandOptions {
     slashCommand?: boolean;
     options?: ApplicationCommandOption[];
     category?: string;
+    disabled?: boolean;
 }
 
 /**

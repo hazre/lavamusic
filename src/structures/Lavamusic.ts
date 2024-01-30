@@ -75,6 +75,12 @@ export default class Lavamusic extends Client {
             commandFiles.forEach(async file => {
                 const cmd = (await import(`../commands/${dir}/${file}`)).default;
                 const command = new cmd(this);
+
+                // skip disabled commands
+                if (command.disabled) {
+                    this.logger.warn(`${command.name} has been disabled`);
+                    return;
+                }
                 command.category = dir;
                 this.commands.set(command.name, command);
                 if (command.aliases.length !== 0) {
