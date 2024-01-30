@@ -62,7 +62,7 @@ export default class Help extends Command {
                     `Hey there! I'm ${this.client.user.username}, a music bot made with [Lavamusic](https://github.com/brblacky/lavamusic) and Discord. You can use \`${prefix}help <command>\` to get more info on a command.`
                 )
                 .setFooter({
-                    text: `Use ${prefix.prefix}help <command> for more info on a command`,
+                    text: `Use ${prefix}help <command> for more info on a command`,
                 });
             fildes.forEach(field => helpEmbed.addFields(field));
             ctx.sendMessage({ embeds: [helpEmbed] });
