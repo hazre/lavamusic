@@ -1,5 +1,5 @@
 # Stage 1: Build TypeScript
-FROM node:18 as builder
+FROM node:21 as builder
 
 WORKDIR /opt/lavamusic/
 
@@ -15,11 +15,15 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Create production image
-FROM node:18-slim
+FROM node:21-slim
 
 ENV NODE_ENV production
 
 WORKDIR /opt/lavamusic/
+
+# Install Git
+RUN apt-get update && \
+    apt-get install -y git
 
 # Copy compiled code
 COPY --from=builder /opt/lavamusic/dist ./dist
