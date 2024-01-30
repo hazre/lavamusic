@@ -185,7 +185,7 @@ export class Utils {
                 }
             } else {
                 await interaction.reply({
-                    content: "You can't use this button",
+                    content: `You can't use this button`,
                     ephemeral: true,
                 });
             }
