@@ -31,7 +31,22 @@ export default class Skip extends Command {
     public async run(client: Lavamusic, ctx: Context): Promise<any> {
         const player = client.queue.get(ctx.guild.id);
         const embed = this.client.embed();
-        if (player.queue.length === 0)
+        if (player.queue.length === 0) {
+            if (player.autoplay) {
+                await ctx.sendMessage({
+                    embeds: [
+                        embed
+                            .setColor(this.client.color.yellow)
+                            .setDescription(
+                                'The queue is currently empty. Attempting to fetch more songs via autoplay.'
+                            ),
+                    ],
+                });
+                await player.Autoplay(player.current ? player.current : player.queue[0]);
+                if (player.queue.length !== 0) {
+                    player.skip();
+                }
+            }
             return await ctx.sendMessage({
                 embeds: [
                     embed
@@ -39,6 +54,7 @@ export default class Skip extends Command {
                         .setDescription('There are no songs in the queue.'),
                 ],
             });
+        }
         player.skip();
         if (!ctx.isInteraction) {
             ctx.message?.react('👍');
