@@ -47,14 +47,15 @@
         "eslint-plugin-unicorn": "^50.0.1",
         "prettier": "^3.2.4",
         "ts-node": "^10.9.2",
-        "typescript": "^5.3.3",
-        "tsx": "^4.7.0"
+        "tsx": "^4.7.0",
+        "typescript": "^5.3.3"
     },
     "dependencies": {
         "better-sqlite3": "^9.3.0",
         "copyfiles": "^2.4.1",
         "discord.js": "^14.14.1",
         "dotenv": "^16.4.1",
+        "odesli.js": "^1.0.4",
         "shoukaku": "^4.0.1",
         "signale": "^1.4.0",
         "songcard": "github:hazre/songcard",

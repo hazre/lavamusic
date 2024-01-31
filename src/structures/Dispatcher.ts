@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/typedef */
-import { Message, User } from 'discord.js';
+import { Message, TextChannel, User } from 'discord.js';
+import Odesli from 'odesli.js';
 import { LoadType, Node, Player, Track } from 'shoukaku';
 
 import { Lavamusic } from './index.js';
@@ -185,12 +186,25 @@ export default class Dispatcher {
         }
     }
     public async Autoplay(song: Song): Promise<void> {
+        let identifier = song.info.identifier;
         if (!song.info.sourceName.includes('youtube')) {
-            return this.destroy();
+            if (!song.info.uri) return this.destroy();
+
+            const odesli = new Odesli();
+            let result = await odesli.fetch(song.info.uri);
+            if (!result) return this.destroy();
+            if (!result.linksByPlatform.youtube.url) return this.destroy();
+
+            const resolve = await this.node.rest.resolve(result.linksByPlatform.youtube.url);
+            if (!resolve || !resolve?.data || resolve.loadType !== LoadType.TRACK) {
+                return this.destroy();
+            }
+
+            identifier = resolve.data.info.identifier;
         }
 
         const mixPlaylist = new URL(
-            `https://www.youtube.com/watch?v=${song.info.identifier}&list=RD${song.info.identifier}&start_radio=1`
+            `https://www.youtube.com/watch?v=${identifier}&list=RD${identifier}&start_radio=1`
         );
         const resolve = await this.node.rest.resolve(mixPlaylist.href);
 
@@ -198,7 +212,7 @@ export default class Dispatcher {
             return this.destroy();
         }
 
-        const metadata = resolve.data.tracks;
+        const metadata = resolve.data.tracks.filter(track => track.info.identifier !== identifier);
 
         for (const item of metadata) {
             const potentialChoice = this.buildTrack(item, this.client.user);
@@ -214,6 +228,22 @@ export default class Dispatcher {
             }
 
             this.queue.push(potentialChoice);
+        }
+
+        try {
+            const guild = this.client.guilds.cache.get(this.player.guildId);
+            const channel = guild.channels.cache.get(this.channelId) as TextChannel;
+            const embed = this.client.embed();
+
+            channel.send({
+                embeds: [
+                    embed
+                        .setColor(this.client.color.main)
+                        .setDescription(`Added ${this.queue.length} songs to the queue.`),
+                ],
+            });
+        } catch (err) {
+            throw new Error(`Couldn't send Autoplay Embed`);
         }
 
         return await this.isPlaying();
