@@ -134,6 +134,13 @@ export default class Dispatcher {
         if (this.stopped) return;
         this.client.shoukaku.emit('playerDestroy', this.player);
     }
+
+    public safeDestroy(): void {
+        if (this.queue.length > 0) return;
+        const data = this.client.db.get_247(this.player.guildId);
+        if (data) return;
+        this.destroy();
+    }
     public setShuffle(shuffle: boolean): void {
         if (!this.player) return;
         this.shuffle = shuffle;
@@ -186,18 +193,20 @@ export default class Dispatcher {
         }
     }
     public async Autoplay(song: Song): Promise<void> {
+        if (this.queue.length > 0) return;
+        this.client.logger.debug(this.queue);
         let identifier = song.info.identifier;
         if (!song.info.sourceName.includes('youtube')) {
-            if (!song.info.uri) return this.destroy();
+            if (!song.info.uri) return this.safeDestroy();
 
             const odesli = new Odesli();
             let result = await odesli.fetch(song.info.uri);
-            if (!result) return this.destroy();
-            if (!result.linksByPlatform.youtube.url) return this.destroy();
+            if (!result) return;
+            if (!result.linksByPlatform.youtube.url) return this.safeDestroy();
 
             const resolve = await this.node.rest.resolve(result.linksByPlatform.youtube.url);
             if (!resolve || !resolve?.data || resolve.loadType !== LoadType.TRACK) {
-                return this.destroy();
+                return this.safeDestroy();
             }
 
             identifier = resolve.data.info.identifier;
@@ -208,9 +217,8 @@ export default class Dispatcher {
         );
         const resolve = await this.node.rest.resolve(mixPlaylist.href);
 
-        if (!resolve || !resolve?.data || resolve.loadType !== LoadType.PLAYLIST) {
-            return this.destroy();
-        }
+        if (!resolve || !resolve?.data || resolve.loadType !== LoadType.PLAYLIST)
+            return this.safeDestroy();
 
         const metadata = resolve.data.tracks.filter(track => track.info.identifier !== identifier);
 
@@ -250,9 +258,9 @@ export default class Dispatcher {
     }
     public async setAutoplay(autoplay: boolean): Promise<void> {
         this.autoplay = autoplay;
-        if (autoplay) {
-            this.Autoplay(this.current ? this.current : this.queue[0]);
-        }
+        // if (autoplay) {
+        //     this.Autoplay(this.current ? this.current : this.queue[0]);
+        // }
     }
 }
 
