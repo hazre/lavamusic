@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/typedef */
 import { Message, User } from 'discord.js';
-import { Node, Player, Track } from 'shoukaku';
+import { LoadType, Node, Player, Track } from 'shoukaku';
 
 import { Lavamusic } from './index.js';
 
@@ -185,34 +185,38 @@ export default class Dispatcher {
         }
     }
     public async Autoplay(song: Song): Promise<void> {
-        const resolve = await this.node.rest.resolve(
-            `${this.client.config.searchEngine}:${song.info.author}`
-        );
-        if (!resolve || !resolve?.data || !Array.isArray(resolve.data)) return this.destroy();
+        if (!song.info.sourceName.includes('youtube')) {
+            return this.destroy();
+        }
 
-        const metadata = resolve.data as Array<any> as any;
-        let choosed: Song | null = null;
-        const maxAttempts = 10; // Maximum number of attempts to find a unique song
-        let attempts = 0;
-        while (attempts < maxAttempts) {
-            const potentialChoice = this.buildTrack(
-                metadata[Math.floor(Math.random() * metadata.length)],
-                this.client.user
+        const mixPlaylist = new URL(
+            `https://www.youtube.com/watch?v=${song.info.identifier}&list=RD${song.info.identifier}&start_radio=1`
+        );
+        const resolve = await this.node.rest.resolve(mixPlaylist.href);
+
+        if (!resolve || !resolve?.data || resolve.loadType !== LoadType.PLAYLIST) {
+            return this.destroy();
+        }
+
+        const metadata = resolve.data.tracks;
+
+        for (const item of metadata) {
+            const potentialChoice = this.buildTrack(item, this.client.user);
+
+            const isInQueue = this.queue.some(
+                s => s.info.identifier === potentialChoice.info.identifier
             );
-            if (
-                !this.queue.some(s => s.encoded === potentialChoice.encoded) &&
-                !this.history.some(s => s.encoded === potentialChoice.encoded)
-            ) {
-                choosed = potentialChoice;
-                break;
+            const isInHistory = this.history.some(
+                s => s.info.identifier === potentialChoice.info.identifier
+            );
+            if (isInQueue || isInHistory) {
+                continue;
             }
-            attempts++;
+
+            this.queue.push(potentialChoice);
         }
-        if (choosed) {
-            this.queue.push(choosed);
-            return await this.isPlaying();
-        }
-        return this.destroy();
+
+        return await this.isPlaying();
     }
     public async setAutoplay(autoplay: boolean): Promise<void> {
         this.autoplay = autoplay;
