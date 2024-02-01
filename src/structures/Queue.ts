@@ -1,4 +1,5 @@
 import { Guild } from 'discord.js';
+import Odesli from 'odesli.js';
 import { LavalinkResponse, Node } from 'shoukaku';
 
 import { Dispatcher, Lavamusic } from './index.js';
@@ -67,6 +68,26 @@ export class Queue extends Map {
     }
 
     public async search(query: string): Promise<LavalinkResponse | undefined> {
+        const songUrlRegexList = [
+            /https?:\/\/music\.amazon\.com\/\S*/g,
+            /https?:\/\/.*?tidal\.com\/\S*/g,
+            /https?:\/\/.*?pandora\.com\/\S*/g,
+        ];
+
+        if (songUrlRegexList.some(regex => regex.test(query))) {
+            const odesli = new Odesli();
+            let result = await odesli.fetch(query);
+            this.client.logger.debug(result);
+            if (!result) return null;
+            if (result.linksByPlatform.youtubeMusic.url) {
+                query = result.linksByPlatform.youtubeMusic.url;
+            } else if (result.linksByPlatform.youtube.url) {
+                query = result.linksByPlatform.youtube.url;
+            } else {
+                return null;
+            }
+        }
+
         const node = this.client.shoukaku.options.nodeResolver(this.client.shoukaku.nodes);
         const regex = /^https?:\/\//;
         let result: LavalinkResponse | undefined;
