@@ -29,9 +29,17 @@ export default class Grab extends Command {
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {
+        if (!ctx.guild) {
+            throw this.client.logger.error('Guild context is missing.');
+        }
+
         const embed = client.embed().setColor(client.color.main);
         let player = client.queue.get(ctx.guild.id);
         let song = player.current;
+
+        if (!song || !song.info.uri || !song.info.artworkUrl) {
+            throw this.client.logger.error('No song is playing.');
+        }
 
         try {
             const dm = client
@@ -47,7 +55,7 @@ export default class Grab extends Command {
                     })`
                 )
                 .setColor(client.color.main);
-            await ctx.author.send({ embeds: [dm] });
+            await ctx.author!.send({ embeds: [dm] });
             return await ctx.sendMessage({
                 embeds: [embed.setDescription(`**I sent you a DM.**`).setColor(client.color.green)],
             });

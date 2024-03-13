@@ -29,6 +29,10 @@ export default class Leave extends Command {
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {
+        if (!ctx.guild) {
+            throw this.client.logger.error('Guild context is missing.');
+        }
+
         const player = client.queue.get(ctx.guild.id);
         const embed = this.client.embed();
         if (player) {
@@ -37,7 +41,7 @@ export default class Leave extends Command {
                     embed
                         .setColor(this.client.color.main)
                         .setDescription(
-                            `Left <#${player.node.manager.connections.get(ctx.guild.id).channelId}>`
+                            `Left <#${player.node.manager.connections.get(ctx.guild.id)?.channelId || 'unknown'}>`
                         ),
                 ],
             });

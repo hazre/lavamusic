@@ -5,7 +5,7 @@ dotenv.config();
 
 export default {
     token: process.env.TOKEN,
-    prefix: process.env.PREFIX,
+    prefix: process.env.PREFIX || '!',
     color: {
         red: 0xff0000,
         green: 0x00ff00,
@@ -15,11 +15,11 @@ export default {
     },
     keepAlive: parseBoolean(process.env.KEEP_ALIVE) || false, // for https://replit.com keep alive bot 24/7
     searchEngine: process.env.SEARCH_ENGINE || (SearchEngine.YouTube as SearchEngine),
-    maxPlaylistSize: parseInt(process.env.MAX_PLAYLIST_SIZE) || 100,
+    maxPlaylistSize: parseInt(process.env.MAX_PLAYLIST_SIZE || '') || 100,
     botStatus: process.env.BOT_STATUS || 'online', // online, idle, dnd, invisible
     botActivity: process.env.BOT_ACTIVITY || 'Lavamusic', // set the bot activity
     botActivityType: parseInt(process.env.BOT_ACTIVITY_TYPE || '2'), // 0 to 5 get more info - https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-types
-    maxQueueSize: parseInt(process.env.MAX_QUEUE_SIZE) || 100,
+    maxQueueSize: parseInt(process.env.MAX_QUEUE_SIZE || '') || 100,
     owners: JSON.parse(process.env.OWNER_IDS || '[]'),
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET || '',

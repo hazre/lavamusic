@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, Role } from 'discord.js';
 
 import { Command, Context, Lavamusic } from '../../structures/index.js';
 
@@ -68,18 +68,25 @@ export default class Dj extends Command {
         });
     }
     public async run(client: Lavamusic, ctx: Context, args: string[]): Promise<any> {
+        if (!ctx.message || !ctx.guild) {
+            throw this.client.logger.error('Guild or Message context is missing.');
+        }
+
         let subCommand: string;
-        let role: any;
-        if (ctx.isInteraction) {
+        let role: Role | undefined;
+        if (ctx.isInteraction && ctx.interaction) {
             subCommand = ctx.interaction.options.data[0].name;
             if (subCommand === 'add' || subCommand === 'remove') {
-                role = ctx.interaction.options.data[0].options[0].role;
+                if (ctx.interaction.options.data[0].options) {
+                    role = ctx.interaction.options.data[0].options[0].role as Role;
+                }
             }
         } else {
             subCommand = args[0];
             role = ctx.message.mentions.roles.first() || ctx.guild.roles.cache.get(args[1]);
         }
         const embed = client.embed().setColor(client.color.main);
+
         let dj = client.db.getDj(ctx.guild.id);
         if (subCommand === 'add') {
             if (!role)
@@ -88,7 +95,7 @@ export default class Dj extends Command {
                 });
             const isExRole = client.db
                 .getRoles(ctx.guild.id)
-                .find((r: any) => r.roleId === role.id);
+                .find((r: any) => r.roleId === role!.id);
             if (isExRole)
                 return await ctx.sendMessage({
                     embeds: [embed.setDescription(`The dj role <@&${role.id}> is already added`)],
@@ -105,7 +112,7 @@ export default class Dj extends Command {
                 });
             const isExRole = client.db
                 .getRoles(ctx.guild.id)
-                .find((r: any) => r.roleId === role.id);
+                .find((r: any) => r.roleId === role!.id);
             if (!isExRole)
                 return await ctx.sendMessage({
                     embeds: [embed.setDescription(`The dj role <@&${role.id}> is not added`)],

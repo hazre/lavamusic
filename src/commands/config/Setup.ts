@@ -53,8 +53,12 @@ export default class Setup extends Command {
         });
     }
     public async run(client: Lavamusic, ctx: Context, args: string[]): Promise<any> {
+        if (!ctx.guild) {
+            throw this.client.logger.error('Guild or Channel context is missing.');
+        }
+
         let subCommand: string;
-        if (ctx.isInteraction) {
+        if (ctx.isInteraction && ctx.interaction) {
             subCommand = ctx.interaction.options.data[0].name;
         } else {
             subCommand = args[0];
@@ -73,6 +77,11 @@ export default class Setup extends Command {
                             },
                         ],
                     });
+
+                if (!this.client.user) {
+                    throw this.client.logger.error(`Couldn't find user`);
+                }
+
                 const textChannel = await ctx.guild.channels.create({
                     name: `${this.client.user.username}-song-requests`,
                     type: ChannelType.GuildText,
@@ -113,7 +122,7 @@ export default class Setup extends Command {
                         components: getButtons(),
                     })
                     .then(async msg => {
-                        client.db.setSetup(ctx.guild.id, textChannel.id, msg.id);
+                        client.db.setSetup(ctx.guild!.id, textChannel.id, msg.id);
                     });
                 const embed2 = client.embed().setColor(client.color.main);
                 await ctx.sendMessage({
@@ -131,18 +140,19 @@ export default class Setup extends Command {
                     return await ctx.sendMessage({
                         embeds: [
                             {
-                                description: "The song request channel doesn't exist",
+                                description: `The song request channel doesn't exist`,
                                 color: client.color.red,
                             },
                         ],
                     });
                 client.db.deleteSetup(ctx.guild.id);
-                await ctx.guild.channels.cache
-                    .get(data2.textId)
-                    .delete()
-                    .catch(() => {
-                        null;
-                    });
+                const channel = ctx.guild.channels.cache.get(data2.textId);
+                if (!channel) {
+                    throw this.client.logger.error(
+                        `Channel with ID ${data2.textId} not found in cache.`
+                    );
+                }
+                await channel.delete();
                 await ctx.sendMessage({
                     embeds: [
                         {
@@ -160,12 +170,17 @@ export default class Setup extends Command {
                     return await ctx.sendMessage({
                         embeds: [
                             {
-                                description: "The song request channel doesn't exist",
+                                description: `The song request channel doesn't exist`,
                                 color: client.color.red,
                             },
                         ],
                     });
                 const channel = ctx.guild.channels.cache.get(data3.textId);
+                if (!channel) {
+                    throw this.client.logger.error(
+                        `Channel with ID ${data3.textId} not found in cache.`
+                    );
+                }
                 embed
                     .setDescription(`The song request channel is <#${channel.id}>`)
                     .setColor(client.color.main);

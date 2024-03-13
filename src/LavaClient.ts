@@ -28,6 +28,10 @@ const clientOptions: ClientOptions = {
 
 const client = new Lavamusic(clientOptions);
 
+if (!config.token) {
+    throw new Error('Token environment variable is not set.');
+}
+
 client.start(config.token);
 
 /**

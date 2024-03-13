@@ -5,7 +5,7 @@ export default class Prefix extends Command {
         super(client, {
             name: 'prefix',
             description: {
-                content: "Shows the bot's prefix",
+                content: `Shows the bot's prefix`,
                 examples: ['prefix set', 'prefix reset', 'prefix set !'],
                 usage: 'prefix set, prefix reset, prefix set !',
             },
@@ -48,14 +48,20 @@ export default class Prefix extends Command {
         });
     }
     public async run(client: Lavamusic, ctx: Context, args: string[]): Promise<any> {
+        if (!ctx.guild) {
+            throw this.client.logger.error('Guild or Message context is missing.');
+        }
+
         const embed = client.embed().setColor(client.color.main);
         let prefix = client.db.getPrefix(ctx.guild.id);
 
         let subCommand: string;
-        let pre: string;
-        if (ctx.isInteraction) {
+        let pre: string | undefined;
+        if (ctx.isInteraction && ctx.interaction) {
             subCommand = ctx.interaction.options.data[0].name;
-            pre = ctx.interaction.options.data[0].options[0]?.value.toString();
+            if (ctx.interaction.options.data[0].options) {
+                pre = ctx.interaction.options.data[0].options[0].value as string;
+            }
         } else {
             subCommand = args[0];
             pre = args[1];

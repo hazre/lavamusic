@@ -29,6 +29,10 @@ export default class Join extends Command {
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {
+        if (!ctx.guild) {
+            throw this.client.logger.error('Guild context is missing.');
+        }
+
         let player = client.queue.get(ctx.guild.id);
         const embed = this.client.embed();
         if (!player) {
@@ -44,7 +48,7 @@ export default class Join extends Command {
                     embed
                         .setColor(this.client.color.main)
                         .setDescription(
-                            `Joined <#${player.node.manager.connections.get(ctx.guild.id).channelId}>`
+                            `Joined <#${player.node.manager.connections.get(ctx.guild.id)?.channelId || 'unknown'}>`
                         ),
                 ],
             });
@@ -54,7 +58,7 @@ export default class Join extends Command {
                     embed
                         .setColor(this.client.color.main)
                         .setDescription(
-                            `I'm already connected to <#${player.node.manager.connections.get(ctx.guild.id).channelId}>`
+                            `I'm already connected to <#${player.node.manager.connections.get(ctx.guild.id)?.channelId || 'unknown'}>`
                         ),
                 ],
             });

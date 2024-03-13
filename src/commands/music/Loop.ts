@@ -29,6 +29,10 @@ export default class Loop extends Command {
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {
+        if (!ctx.guild) {
+            throw this.client.logger.error('Guild context is missing.');
+        }
+
         const embed = client.embed().setColor(client.color.main);
         const player = client.queue.get(ctx.guild.id);
 

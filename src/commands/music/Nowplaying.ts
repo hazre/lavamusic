@@ -34,8 +34,16 @@ export default class Nowplaying extends Command {
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {
+        if (!ctx.guild) {
+            throw this.client.logger.error('Guild context is missing.');
+        }
+
         const player = client.queue.get(ctx.guild.id);
         const track = player.current;
+
+        if (!track) {
+            throw this.client.logger.error('No song is playing.');
+        }
 
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = dirname(__filename);

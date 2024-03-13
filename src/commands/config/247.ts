@@ -29,6 +29,10 @@ export default class _247 extends Command {
         });
     }
     public async run(client: Lavamusic, ctx: Context): Promise<any> {
+        if (!ctx.guild || !ctx.channel) {
+            throw this.client.logger.error('Guild or Channel context is missing.');
+        }
+
         const embed = client.embed();
         let player = client.shoukaku.players.get(ctx.guild.id) as any;
 
